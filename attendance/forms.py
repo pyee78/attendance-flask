@@ -6,6 +6,13 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationE
 from attendance.models import User
 
 
+# *** APPLICATION FORMS ***
+class NoteUploadForm(FlaskForm):
+    picture = FileField('Upload Image', validators=[FileAllowed(['jpg', 'png'])])
+    submit = SubmitField('Upload')
+
+
+# *** USER ADMINISTRATION FORMS ***
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
                            validators=[DataRequired(), Length(min=2, max=20)])
@@ -36,7 +43,7 @@ class RegistrationForm(FlaskForm):
 class LoginForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
-    password = PasswordField('Confirm Password',
+    password = PasswordField('Password',
                              validators=[DataRequired(), EqualTo('password')])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Log In')

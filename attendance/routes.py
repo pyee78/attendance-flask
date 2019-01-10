@@ -1,11 +1,12 @@
 import secrets
 import os
+from datetime import datetime
 from PIL import Image
 from flask import render_template, flash, redirect, url_for, request
 from attendance import app
-from attendance.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from attendance.forms import RegistrationForm, LoginForm, UpdateAccountForm, NoteUploadForm
 from attendance import bcrypt, db
-from attendance.models import User
+from attendance.models import User, Note
 from flask_login import login_user, current_user, logout_user, login_required
 
 
@@ -14,6 +15,48 @@ from flask_login import login_user, current_user, logout_user, login_required
 @app.route("/home")
 def home():  # probably doesn't matter what I call this function
     return render_template("home.html", title="HOME")
+
+
+def save_note_image(form_pic):
+    random_hex = secrets.token_hex(8)
+    # _ is a placeholder for a variable I know I'm not going to use
+    _, f_ext = os.path.splitext(form_pic.filename)
+    picture_filename = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/note_images', picture_filename)
+
+    # Pillow methods to save pic
+    i = Image.open(form_pic)
+    i.save(picture_path)
+    return picture_filename
+
+
+# UPLOAD NOTE route
+@app.route("/upload", methods=['GET', 'POST'])
+@login_required
+def upload():
+
+    form = NoteUploadForm()
+
+    if form.validate_on_submit():
+        if form.picture.data:
+
+            # save the picture to get its filename
+            picture_file = save_note_image(form.picture.data)
+
+            # initialize the note object
+            note = Note(note_image=picture_file,
+                        user_id=current_user.id,
+                        system_date=datetime.utcnow())
+
+            #save it to database
+            db.session.add(note)
+            db.session.commit()
+
+            #flash success message and go home
+            flash('Image has been uploaded', 'success')
+            return redirect(url_for('home'))
+
+    return render_template('upload.html', title='UPLOAD', form=form)
 
 
 # REGISTER route
@@ -63,6 +106,7 @@ def login():
     return render_template('login.html', title='Login', form=form)
 
 
+# LOGOUT route
 @app.route("/logout")
 def logout():
     logout_user()
@@ -84,6 +128,7 @@ def save_picture(form_pic):
     return picture_filename
 
 
+# ACCOUNT route
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
@@ -103,4 +148,4 @@ def account():
 
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account',
-                          image_file = image_file, form=form)
+                          image_file=image_file, form=form)

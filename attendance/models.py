@@ -35,7 +35,7 @@ class Student(db.Model):
     grad_class = db.Column(db.Integer, nullable=False)  # we don't want to store fresh, soph, etc.
 
     # one to many with Student to Note
-    notes = db.relationship('Note', backref='student', lazy=True)
+    #notes = db.relationship('Note', backref='student', lazy=True)
 
     def __repr__(self):
         return f"Note('{self.id}', '{self.firstname}', '{self.lastname}')"
@@ -43,13 +43,16 @@ class Student(db.Model):
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    note_image = db.Column(db.String(20), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=True)
-    note_image = db.Column(db.String(20), nullable=True)
     system_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    begin_date = db.Column(db.DateTime, nullable=True)
-    end_date = db.Column(db.DateTime, nullable=True)
     content = db.Column(db.String(2000), nullable=True)
 
+    # TODO: *** future elements to this model ***
+    # student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=True)
+    # begin_date = db.Column(db.DateTime, nullable=True)
+    # end_date = db.Column(db.DateTime, nullable=True)
+
+
     def __repr__(self):
-        return f"Note('{self.begin_date}', '{self.end_date}', '{self.content}')"
+        return f"Note('{self.note_image}')"
