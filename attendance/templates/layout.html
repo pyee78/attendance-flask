@@ -8,7 +8,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}"> -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
     {% if title %}
       <title>Attendance App - {{ title }}</title>
@@ -32,8 +32,8 @@
 
         <!-- Left-justified links go here -->
         <ul class="navbar-nav mr-auto">
-          <li><a class="nav-item nav-link" href="{{ url_for('upload')}}">Upload Note Image</a></li>
-          <li><a class="nav-item nav-link" href="#">NavItem2</a></li>
+          <li><a class="nav-item nav-link" href="{{ url_for('upload') }}">Upload Note Image</a></li>
+          <li><a class="nav-item nav-link" href="{{ url_for('notes') }}">My Notes</a></li>
           <li><a class="nav-item nav-link" href="#">NavItem3</a></li>
         </ul>
 

@@ -54,9 +54,20 @@ def upload():
 
             #flash success message and go home
             flash('Image has been uploaded', 'success')
-            return redirect(url_for('home'))
+            return redirect(url_for('upload'))
 
     return render_template('upload.html', title='UPLOAD', form=form)
+
+
+# NOTES route
+@app.route("/notes")
+@login_required
+def notes():
+
+    # query all notes for current user
+    notes = Note.query.filter_by(user_id = current_user.id)
+
+    return render_template('notes.html', title='NOTES', notes=notes)
 
 
 # REGISTER route

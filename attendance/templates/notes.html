@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+{% for note in notes %}
+  <img class="note-img" src="{{ url_for('static', filename='note_images/' + note.note_image) }}" alt="">
+  <p>{{ note.system_date }}</p>
+{% endfor %}
+
+{% endblock content %}
