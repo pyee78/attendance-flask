@@ -59,7 +59,7 @@ def upload():
     return render_template('upload.html', title='UPLOAD', form=form)
 
 
-# NOTES route
+# MY NOTES route
 @app.route("/notes")
 @login_required
 def notes():
@@ -68,6 +68,34 @@ def notes():
     notes = Note.query.filter_by(user_id = current_user.id)
 
     return render_template('notes.html', title='NOTES', notes=notes)
+
+
+# DELETE NOTE route
+@app.route("/notes/delete/<id>", methods=['POST'])
+@login_required
+def delete_note(id):
+    # if note belongs to current_user
+    del_note = Note.query.filter_by(id=id).first()
+    if current_user.id == del_note.user_id:
+
+        # delete img file from "server"
+        image_path = os.path.join(app.root_path,
+                                 'static/note_images',
+                                 del_note.note_image)
+        os.remove(image_path)
+
+        # delete record from database
+        db.session.delete(del_note)
+        db.session.commit()
+
+        # flash confirmation
+        flash('Note successfully deleted', 'success')
+
+    else:
+        # I don't think anyone can get here b/c it's a POST only route
+        flash('That note does not belong to you.', 'danger')
+
+    return redirect(url_for('notes'))
 
 
 # REGISTER route
